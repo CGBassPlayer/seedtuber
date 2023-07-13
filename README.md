@@ -1,6 +1,6 @@
-# PeerTube-Headless-Seeder
+# SeedTuber
 
-This container uses Python, Selenium, and Firefox to monitor and seed live streams of a PeerTube instance headlessly.
+Seed your [PeerTube](https://joinpeertube.org/) live streams locally or anywhere in the world!
 
 ## :rotating_light: :rotating_light: THIS IS A WORK IN PROGRESS :rotating_light: :rotating_light:
 
@@ -20,7 +20,7 @@ version: "3.3"
 
 services:
   peertube-seeder:
-    image: tyrsarm/peertube-headless-seeder:latest
+    image: ghcr.io/cgbassplayer/seedtuber:latest
     environment:
       peertube_url: "https://jupiter.tube/"
       ping_interval: 300
@@ -31,11 +31,11 @@ services:
 
 ```
 docker run -d \
-  --name peertube-headless-seeder
+  --name seedtuber
   -e peertube_url="https://jupiter.tube/" \
   -e ping_interval=300 \
   --restart=unless-stopped \
-  tyrsarm/peertube-headless-seeder:latest
+  ghcr.io/cgbassplayer/seedtuber:latest
 ```
 
 ### Parameters
@@ -55,12 +55,8 @@ docker run -d \
 
 #### Via Docker CLI
 
-1. Update the image: `docker pull tyrsarm/peertube-headless-seeder:latest`
-2. Stop the running container: `docker stop peertube-headless-seeder`
-3. Delete the container: `docker rm peertube-headless-seeder`
+1. Update the image: `docker pull ghcr.io/cgbassplayer/seedtuber:latest`
+2. Stop the running container: `docker stop seedtuber`
+3. Delete the container: `docker rm seedtuber`
 4. Recreate a new container with the same docker run parameters as instructed above
 5. You can also remove the old dangling images: `docker image prune`
-
-## Source Code:
-
-https://github.com/tyrsarm/peertube-headless-seeder
