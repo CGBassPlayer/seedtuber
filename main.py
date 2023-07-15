@@ -1,12 +1,14 @@
 import os
-import time
 
 import requests
+from schedule import repeat, every, run_pending
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.webdriver import WebDriver
 from webdriver_manager.firefox import GeckoDriverManager
-from selenium.webdriver.firefox.service import Service as FirefoxService
+
+BROWSER_INSTANCES: list[tuple[str, WebDriver]] = []
 
 
 def get_live_video_urls(instance_url: str) -> list[str]:
@@ -20,7 +22,7 @@ def get_live_video_urls(instance_url: str) -> list[str]:
     return [v["url"] for v in videos_json["data"]]
 
 
-def run_browser_instance(url: str = None) -> WebDriver:
+def start_browser_instance(url: str = None) -> WebDriver:
     """
     Create a headless Firefox instance and navigate to the URL provide. Then returns the Firefox instance
     :param url: URL to send browser to
@@ -36,28 +38,25 @@ def run_browser_instance(url: str = None) -> WebDriver:
     return browser
 
 
-def main(url: str, api_call_interval_sec: int) -> None:
-    browser_instances: list[tuple[str, WebDriver]] = []
-    while True:
-        print("Checking for live videos")
-        live_videos: list[str] = get_live_video_urls(url)
+@repeat(every(int(os.getenv("ping_interval", default="300"))).seconds,
+        url=os.getenv("peertube_url", default="https://jupiter.tube/"))
+def update(url: str) -> None:
+    print("Checking for live videos")
+    live_videos: list[str] = get_live_video_urls(url)
 
-        print(f"Current live videos: {len(live_videos)}")
-        for (url, browser) in browser_instances:
-            if url not in live_videos:
-                print(f"{url} is no longer live. Closing browser session")
-                browser.close()
+    print(f"Current live videos: {len(live_videos)}")
+    for (url, browser) in BROWSER_INSTANCES:
+        if url not in live_videos:
+            print(f"{url} is no longer live. Closing browser session")
+            browser.close()
+            BROWSER_INSTANCES.remove((url, browser))
 
-        for video in live_videos:
-            if video not in (i[0] for i in browser_instances):
-                browser: WebDriver = run_browser_instance(video)
-                browser_instances.append((video, browser))
-
-        # This will probably be made better by scheduling the function calls
-        time.sleep(api_call_interval_sec)
+    for video in live_videos:
+        if video not in (i[0] for i in BROWSER_INSTANCES):
+            browser: WebDriver = start_browser_instance(video)
+            BROWSER_INSTANCES.append((video, browser))
 
 
 if __name__ == '__main__':
-    api_url: str = os.getenv("peertube_url", default="https://jupiter.tube/")
-    api_call_interval: int = int(os.getenv("ping_interval", default="300"))
-    main(api_url, api_call_interval)
+    while True:
+        run_pending()  # Run as normal

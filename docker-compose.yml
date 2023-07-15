@@ -2,8 +2,8 @@ version: "3.3"
 
 services:
   peertube-seeder:
-    image: tyrsarm/peertube-headless-seeder:latest
+    image: ghcr.io/cgbassplayer/seedtuber:latest
     environment:
       peertube_url: "https://jupiter.tube/"
-      retry_sec: 300
+      ping_interval: 300
     restart: unless-stopped
