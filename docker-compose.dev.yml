@@ -2,11 +2,11 @@ version: "3.3"
 
 services:
   peertube-seeder-dev:
-    container_name: peertube-headless-seeder-dev
-    image: peertube-headless-seeder-dev
+    container_name: seedtuber-dev
+    image: seedtuber-dev
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       peertube_url: "https://jupiter.tube/"
-      retry_sec: 5
+      ping_interval: 5
