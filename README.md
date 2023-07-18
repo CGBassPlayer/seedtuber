@@ -6,7 +6,7 @@ Seed your [PeerTube](https://joinpeertube.org/) live streams locally or anywhere
 
 ### TO-DO:
 
-1. Set proper pause timing for calling the API
+1. ~~Set proper pause timing for calling the API~~
 2. Reduce the size of the docker image
 3. Setup testing
 4. Add metrics and logging
