@@ -58,5 +58,6 @@ def update(url: str) -> None:
 
 
 if __name__ == '__main__':
+    update(os.getenv("peertube_url", default="https://jupiter.tube/"))
     while True:
         run_pending()  # Run as normal

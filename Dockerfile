@@ -19,10 +19,10 @@ RUN apt update && \
 RUN pip install -r requirements.txt --no-cache-dir
 
 # Add a non-root user to run our program
-RUN groupadd -r user && \
-    useradd --no-log-init -r -g user user && \
-    chown -R user:user /app
-USER user
+#RUN groupadd -r user && \
+#    useradd --no-log-init -r -g user user && \
+#    chown -R user:user /app
+#USER user
 
 ENV peertube_url="https://jupiter.tube/"
 ENV ping_interval=300
