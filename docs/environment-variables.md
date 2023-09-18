@@ -1,0 +1,7 @@
+# Environment Variables
+
+| Name            | Default Value           | Description                                                                                                                                                                                                                      |
+|-----------------|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `peertube_url`  | https://jupiter.tube/   | Link to the peertube instance that will be watched. Only 1 instance can be watched per seedtuber instance. This is why docker is the recommended way to use this script.                                                         |
+| `ping_interval` | 5 minutes (300 seconds) | This is how often you ping the peertube instance's API to check for new live streams. The shorter the interval, the more times the API will be hit and the more likely you are going to be rate limited.                         |
+| `browser_limit` | 5 browsers instances    | This is the number of concurrent headless browser instances the script can run at any given time. Setting the value to 0 defaults in a limit of 100 browser instances (meaning 100 livestreams) can be reseeded from the script. |
