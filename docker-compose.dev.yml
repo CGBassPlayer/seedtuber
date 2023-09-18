@@ -10,3 +10,4 @@ services:
     environment:
       peertube_url: "https://jupiter.tube/"
       ping_interval: 5
+      browser_limit: 0

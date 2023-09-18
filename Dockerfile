@@ -26,6 +26,7 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 ENV peertube_url="https://jupiter.tube/"
 ENV ping_interval=300
+ENV browser_limit=5
 
 # Run the script
 CMD [ "python", "./main.py" ]

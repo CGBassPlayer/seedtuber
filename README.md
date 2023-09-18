@@ -24,6 +24,7 @@ services:
     environment:
       peertube_url: "https://jupiter.tube/"
       ping_interval: 300
+      browser_limit: 5
     restart: unless-stopped
 ```
 
@@ -34,16 +35,20 @@ docker run -d \
   --name seedtuber
   -e peertube_url="https://jupiter.tube/" \
   -e ping_interval=300 \
+  -e browser_limit=5 \
   --restart=unless-stopped \
   ghcr.io/cgbassplayer/seedtuber:latest
 ```
 
 ### Parameters
 
-| Parameter     | Function                                               | Default                |
-|---------------|--------------------------------------------------------|------------------------|
-| peertube_url  | URL of the PeerTube instance that you want to seed     | `https://jupiter.tube` |
-| ping_interval | The time between checking for live videos (in seconds) | `300`                  |
+| Parameter     | Function                                                                                                                                     | Default                |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| peertube_url  | URL of the PeerTube instance that you want to seed                                                                                           | `https://jupiter.tube` |
+| ping_interval | The time between checking for live videos (in seconds)                                                                                       | `300`                  |
+| browser_limit | The maximum number of browser instances you can run. If this value is set to 0, this process can run up to 100 live streams at the same time | `5`                    |
+
+More information about these parameters can be seen in the [documentation](docs/README.md)
 
 ### Updating
 

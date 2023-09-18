@@ -6,4 +6,5 @@ services:
     environment:
       peertube_url: "https://jupiter.tube/"
       ping_interval: 300
+      browser_limit: 5
     restart: unless-stopped

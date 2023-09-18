@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 
 import requests
@@ -11,13 +12,16 @@ from webdriver_manager.firefox import GeckoDriverManager
 BROWSER_INSTANCES: list[tuple[str, WebDriver]] = []
 
 
-def get_live_video_urls(instance_url: str) -> list[str]:
+def get_live_video_urls(instance_url: str, count: int) -> list[str]:
     """
     Get a list of URLs for the videos that are currently live.
+    :param count: Limit the number of results in the list
     :param instance_url: base url of the PeerTube instance that will be called
     :return: list of URLs as strings
     """
-    search_url: str = f"{instance_url}api/v1/search/videos?isLive=true&sort=-publishedAt"
+    if count > 100 or count == 0:
+        count = 100
+    search_url: str = f"{instance_url}api/v1/search/videos?isLive=true&sort=-publishedAt&count={count}"
     videos_json: dict = requests.get(search_url).json()
     return [v["url"] for v in videos_json["data"]]
 
@@ -39,10 +43,13 @@ def start_browser_instance(url: str = None) -> WebDriver:
 
 
 @repeat(every(int(os.getenv("ping_interval", default="300"))).seconds,
-        url=os.getenv("peertube_url", default="https://jupiter.tube/"))
-def update(url: str) -> None:
+        url=os.getenv("peertube_url", default="https://jupiter.tube/"),
+        browser_limit=int(os.getenv("browser_limit", default="0")))
+def update(url: str, browser_limit: int) -> None:
+    if browser_limit == 0:
+        browser_limit = 100
     print("Checking for live videos")
-    live_videos: list[str] = get_live_video_urls(url)
+    live_videos: list[str] = get_live_video_urls(url, browser_limit)
 
     print(f"Current live videos: {len(live_videos)}")
     for (url, browser) in BROWSER_INSTANCES:
@@ -52,12 +59,15 @@ def update(url: str) -> None:
             BROWSER_INSTANCES.remove((url, browser))
 
     for video in live_videos:
-        if video not in (i[0] for i in BROWSER_INSTANCES):
+        if video not in (i[0] for i in BROWSER_INSTANCES) and len(BROWSER_INSTANCES) <= browser_limit:
             browser: WebDriver = start_browser_instance(video)
             BROWSER_INSTANCES.append((video, browser))
 
 
 if __name__ == '__main__':
-    update(os.getenv("peertube_url", default="https://jupiter.tube/"))
+    # Do first run immediately
+    update(
+        url=os.getenv("peertube_url", default="https://jupiter.tube/"),
+        browser_limit=int(os.getenv("browser_limit", default="0")))
     while True:
         run_pending()  # Run as normal
