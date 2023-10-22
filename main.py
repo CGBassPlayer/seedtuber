@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 import os
+import time
 
 import requests
-from schedule import repeat, every, run_pending
+# from schedule import repeat, every, run_pending
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service as FirefoxService
@@ -42,9 +43,9 @@ def start_browser_instance(url: str = None) -> WebDriver:
     return browser
 
 
-@repeat(every(int(os.getenv("ping_interval", default="300"))).seconds,
-        url=os.getenv("peertube_url", default="https://jupiter.tube/"),
-        browser_limit=int(os.getenv("browser_limit", default="0")))
+# @repeat(every(int(os.getenv("ping_interval", default="300"))).seconds,
+#         url=os.getenv("peertube_url", default="https://jupiter.tube/"),
+#         browser_limit=int(os.getenv("browser_limit", default="0")))
 def update(url: str, browser_limit: int) -> None:
     if browser_limit == 0:
         browser_limit = 100
@@ -66,8 +67,10 @@ def update(url: str, browser_limit: int) -> None:
 
 if __name__ == '__main__':
     # Do first run immediately
-    update(
-        url=os.getenv("peertube_url", default="https://jupiter.tube/"),
-        browser_limit=int(os.getenv("browser_limit", default="0")))
     while True:
-        run_pending()  # Run as normal
+        update(
+            url=os.getenv("peertube_url", default="https://jupiter.tube/"),
+            browser_limit=int(os.getenv("browser_limit", default="0")))
+        time.sleep(int(os.getenv("ping_interval", default="300")))
+    # while True:
+    #     run_pending()  # Run as normal
